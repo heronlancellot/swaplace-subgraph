@@ -1,17 +1,24 @@
 import { ponder } from "@/generated";
 import { getSwapData } from "./getSwap";
 import { getEnsData } from "./getEns";
+import { getTokenData } from "./getTokenData";
+import { TokenBalanceType } from "alchemy-sdk";
+
 
 ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   const { client } = context;
   const { Swaplace } = context.contracts;
-  const { SwapDatabase, EnsDatabase } = context.db;
+  const { SwapDatabase, EnsDatabase, ProfileDatabase } = context.db;
   const { swapId, owner } = event.args;
 
   const { expiry, allowed, strinfiedBid, strinfiedAsk } = await getSwapData(
     client,
     Swaplace,
     swapId,
+  );
+
+  const { tokenSymbol, tokenName } = await getTokenData(
+    client,
   );
 
   await SwapDatabase.create({
@@ -28,6 +35,43 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
       ask: strinfiedAsk,
     },
   });
+
+  await ProfileDatabase.upsert({
+    id: swapId,
+
+    create: {
+      address: owner,
+      firstInteractionDate: 
+      lastInteractionDate: 
+      createSwapCount: 
+      acceptSwapCount: 
+      cancelSwapCount: 
+      totalTransactionCount: 
+      cumulativeGasFees: 
+      totalScore: 
+    },
+
+    update: ({
+      createSwapCount: 
+      acceptSwapCount: 
+      cancelSwapCount: +
+      totalTransactionCount: 
+      cumulativeGasFees: 
+      totalScore: 
+    }),
+  })
+
+  await TokenDatabase.create({
+    id: swapId,
+    data:{
+      address: ,
+      tokenType: ,
+      name: tokenName,
+      symbol: tokenSymbol,
+      decimals: 
+      baseUri: 
+    }
+  })
 
   // const primaryName = await getEnsData(client, owner);
   // console.log("PRIMARY NAME", primaryName);
