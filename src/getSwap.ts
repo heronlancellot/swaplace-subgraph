@@ -1,51 +1,46 @@
-interface Client {
-  readContract: any;
-}
-
-interface Swaplace {
-  abi: any;
-  address: string;
-}
-
-interface Token {
-  addr: string;
-  amountOrId: string;
-}
+import { Swap, Client, Swaplace, Token } from "./types";
 
 export async function getSwapData(
   client: Client,
   Swaplace: Swaplace,
   swapId: bigint,
 ) {
-  const contractResponse = await client.readContract({
-    abi: Swaplace.abi,
-    address: Swaplace.address,
-    functionName: "getSwap",
-    args: [swapId],
-  });
+  try {
+    const contractResponse = await client.readContract({
+      abi: Swaplace.abi,
+      address: Swaplace.address,
+      functionName: "getSwap",
+      args: [swapId],
+    });
 
-  let config = contractResponse.config;
+    let config: any = contractResponse.config;
 
-  const expiry = BigInt(config) & ((BigInt(1) << BigInt(96)) - BigInt(1));
-  const allowed = (BigInt(config) >> BigInt(96)).toString(16);
+    const expiry: bigint =
+      BigInt(config) & ((BigInt(1) << BigInt(96)) - BigInt(1));
+    const allowed = (BigInt(config) >> BigInt(96)).toString(16);
 
-  const biding = contractResponse.biding.map((token: Token) => ({
-    addr: token.addr,
-    amountOrId: token.amountOrId.toString(),
-  }));
+    const biding: Token[] = contractResponse.biding.map((token: Token) => ({
+      addr: token.addr.toString(),
+      amountOrId: token.amountOrId.toString(),
+    }));
 
-  const asking = contractResponse.asking.map((token: Token) => ({
-    addr: token.addr,
-    amountOrId: token.amountOrId.toString(),
-  }));
+    const asking: Token[] = contractResponse.asking.map((token: Token) => ({
+      addr: token.addr.toString(),
+      amountOrId: token.amountOrId.toString(),
+    }));
 
-  const strinfiedBid = JSON.stringify(biding);
-  const strinfiedAsk = JSON.stringify(asking);
+    const strinfiedBid: string = JSON.stringify(biding);
+    const strinfiedAsk: string = JSON.stringify(asking);
 
-  return {
-    expiry,
-    allowed,
-    strinfiedBid,
-    strinfiedAsk,
-  };
+    const swap: Swap = {
+      allowed: allowed,
+      expiry: expiry,
+      bid: strinfiedBid,
+      ask: strinfiedAsk,
+    };
+
+    return swap;
+  } catch (error) {
+    console.log("Failed to create get swap for %s.", swapId, error);
+  }
 }

@@ -2,75 +2,84 @@ import { ponder } from "@/generated";
 import { getSwapData } from "./getSwap";
 import { getEnsData } from "./getEns";
 import { getTokenData } from "./getTokenData";
-
+import { Swap } from "./types";
 
 ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   const { client } = context;
   const { Swaplace } = context.contracts;
-  const { SwapDatabase, EnsDatabase, ProfileDatabase, TokenDatabase } = context.db;
+  const {
+    SwapDatabase,
+    ProfileDatabase,
+    EnsDatabase,
+    TokenDatabase,
+    OverallDatabase,
+  } = context.db;
   const { swapId, owner } = event.args;
 
-  const { expiry, allowed, strinfiedBid, strinfiedAsk } = await getSwapData(
-    client,
-    Swaplace,
-    swapId,
-  );
+  try {
+    let swap: Swap | undefined;
+    swap = await getSwapData(client, Swaplace, swapId);
 
-  const { tokenSymbol, tokenName, tokenDecimals } = await getTokenData(
-    client,
-  );
+    if (swap != undefined && swap) {
+      await SwapDatabase.create({
+        id: swapId,
+        data: {
+          blockTimestamp: event.block.timestamp,
+          transactionHash: event.transaction.hash,
+          status: "CREATED",
+          swapId: swapId,
+          owner: owner,
+          allowed: `0x${swap.allowed}`,
+          expiry: swap.expiry,
+          bid: swap.bid,
+          ask: swap.ask,
+        },
+      });
+    } else {
+      throw new Error("Swap is possible undefined.");
+    }
+  } catch (error) {
+    console.log("Failed to create SwapDatabase entry.", error);
+  }
 
-  await SwapDatabase.create({
-    id: swapId,
-    data: {
-      blockTimestamp: event.block.timestamp,
-      transactionHash: event.transaction.hash,
-      status: "CREATED",
-      swapId: swapId,
-      owner: owner,
-      allowed: `0x${allowed}`,
-      expiry: expiry,
-      bid: strinfiedBid,
-      ask: strinfiedAsk,
-    },
-  });
+  // await ProfileDatabase.upsert({
+  //   id: swapId,
 
-  await ProfileDatabase.upsert({
-    id: swapId,
+  //   create: {
+  //     address: owner,
+  //     firstInteractionDate:
+  //     lastInteractionDate:
+  //     createSwapCount:
+  //     acceptSwapCount:
+  //     cancelSwapCount:
+  //     totalTransactionCount:
+  //     cumulativeGasFees:
+  //     totalScore:
+  //   },
 
-    create: {
-      address: owner,
-      firstInteractionDate: 
-      lastInteractionDate: 
-      createSwapCount: 
-      acceptSwapCount: 
-      cancelSwapCount: 
-      totalTransactionCount: 
-      cumulativeGasFees: 
-      totalScore: 
-    },
+  //   update: ({
+  //     createSwapCount:
+  //     acceptSwapCount:
+  //     cancelSwapCount:
+  //     totalTransactionCount:
+  //     cumulativeGasFees:
+  //     totalScore:
+  //   }),
+  // })
 
-    update: ({
-      createSwapCount: 
-      acceptSwapCount: 
-      cancelSwapCount: 
-      totalTransactionCount: 
-      cumulativeGasFees: 
-      totalScore: 
-    }),
-  })
+  const { tokenSymbol, tokenName, tokenDecimals } = await getTokenData(client);
 
   await TokenDatabase.create({
     id: swapId,
-    data:{
+    data: {
       address: "",
       tokenType: "",
       name: tokenName,
       symbol: tokenSymbol,
       decimals: tokenDecimals,
       baseUri: "", //baseURI -> ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq
-    }
-  })
+    },
+  });
 
   // const primaryName = await getEnsData(client, owner);
   // console.log("PRIMARY NAME", primaryName);
