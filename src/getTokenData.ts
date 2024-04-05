@@ -23,5 +23,14 @@ export async function getTokenData(client: Client) {
 
   let tokenName = contractResponseTokenName.config;
 
-  return { tokenSymbol, tokenName };
+  const contractResponseTokenDecimals = await client.readContract({
+    abi: ERC20Abi,
+    address: "ERC20ADDRESS",
+    functionName: "decimals",
+    args: [],
+  });
+
+  let tokenDecimals = contractResponseTokenDecimals.config;
+
+  return { tokenSymbol, tokenName, tokenDecimals };
 }
