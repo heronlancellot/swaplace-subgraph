@@ -2,7 +2,7 @@ import { ponder } from "@/generated";
 import { getSwapData } from "./getSwap";
 import { getEnsData } from "./getEns";
 import { getTokenData } from "./getTokenData";
-import { Swap } from "./types";
+import { Swap, Tokens } from "./types";
 
 ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   const { client } = context;
@@ -16,9 +16,12 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   } = context.db;
   const { swapId, owner } = event.args;
 
+  let tokenList: Tokens[];
+
   try {
     let swap: Swap | undefined;
-    swap = await getSwapData(client, Swaplace, swapId);
+    let tokens;
+    { swap, tokens } = await getSwapData(client, Swaplace, swapId);
 
     if (swap != undefined && swap) {
       await SwapDatabase.create({

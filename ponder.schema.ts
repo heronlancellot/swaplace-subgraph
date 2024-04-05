@@ -42,7 +42,7 @@ export default createSchema((p) => ({
     tokenType: p.enum("TokenType"),
     name: p.string(),
     symbol: p.string(),
-    decimals: p.bigint(),
+    decimals: p.string(),
     baseUri: p.string(), //Pegar o resultado e reitrar as barras, deixar apenas o que está no meio
   }),
 

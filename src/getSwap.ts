@@ -14,7 +14,6 @@ export async function getSwapData(
     });
 
     let config: any = contractResponse.config;
-
     const expiry: bigint =
       BigInt(config) & ((BigInt(1) << BigInt(96)) - BigInt(1));
     const allowed = (BigInt(config) >> BigInt(96)).toString(16);
@@ -23,7 +22,6 @@ export async function getSwapData(
       addr: token.addr.toString(),
       amountOrId: token.amountOrId.toString(),
     }));
-
     const asking: Token[] = contractResponse.asking.map((token: Token) => ({
       addr: token.addr.toString(),
       amountOrId: token.amountOrId.toString(),
@@ -32,6 +30,10 @@ export async function getSwapData(
     const strinfiedBid: string = JSON.stringify(biding);
     const strinfiedAsk: string = JSON.stringify(asking);
 
+    let tokenAddresses: string[];
+    biding.map((token: Token) => tokenAddresses.push(token.addr.toString()));
+    asking.map((token: Token) => tokenAddresses.push(token.addr.toString()));
+
     const swap: Swap = {
       allowed: allowed,
       expiry: expiry,
@@ -39,7 +41,7 @@ export async function getSwapData(
       ask: strinfiedAsk,
     };
 
-    return swap;
+    return { swap, tokenAddresses };
   } catch (error) {
     console.log("Failed to create get swap for %s.", swapId, error);
   }
