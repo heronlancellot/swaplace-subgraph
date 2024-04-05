@@ -16,7 +16,7 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   } = context.db;
   const { swapId, owner } = event.args;
 
-  let tokenList: Tokens[];
+  let tokenList: Tokens[] = [];
 
   try {
     let swap: Swap | undefined;
@@ -72,17 +72,26 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
 
   const { tokenSymbol, tokenName, tokenDecimals } = await getTokenData(client);
 
-  await TokenDatabase.create({
-    id: swapId,
-    data: {
-      address: "",
-      tokenType: "",
-      name: tokenName,
-      symbol: tokenSymbol,
-      decimals: tokenDecimals,
-      baseUri: "", //baseURI -> ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq
-    },
-  });
+  try {
+    if(tokenList != undefined && tokenList){
+
+      await TokenDatabase.create({
+        id: swapId,
+        data: {
+          address: "",
+          tokenType: "",
+          name: tokenName,
+          symbol: tokenSymbol,
+          decimals: tokenDecimals,
+          baseUri: "", //baseURI -> ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq
+        },
+      });
+    } else {
+      throw new Error("Token is possible undefined.");
+    }
+  }catch(error){
+    console.log("Failed to create TokenDatabase entry.", error);
+  }
 
   // const primaryName = await getEnsData(client, owner);
   // console.log("PRIMARY NAME", primaryName);
