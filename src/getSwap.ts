@@ -30,7 +30,7 @@ export async function getSwapData(
     const strinfiedBid: string = JSON.stringify(biding);
     const strinfiedAsk: string = JSON.stringify(asking);
 
-    let tokenAddresses: string[];
+    let tokenAddresses: string[] = [];
     biding.map((token: Token) => tokenAddresses.push(token.addr.toString()));
     asking.map((token: Token) => tokenAddresses.push(token.addr.toString()));
 
