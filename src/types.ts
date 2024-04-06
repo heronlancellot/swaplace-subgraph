@@ -14,16 +14,22 @@ export interface Swaplace {
   address: string;
 }
 
-export interface Token {
+export interface Asset {
   addr: string;
   amountOrId: string;
 }
 
-export interface Tokens {
+export enum TokenType {
+  ERC20 = "ERC20",
+  ERC721 = "ERC721",
+  UNDEFINED = "UNDEFINED",
+}
+
+export interface Token {
   address: string;
-  type: string;
-  symbol: string;
+  type: TokenType;
   name: string;
+  symbol: string;
   decimals?: string;
   baseUri?: string;
 }

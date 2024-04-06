@@ -16,30 +16,26 @@ export default createSchema((p) => ({
   }),
 
   ProfileDatabase: p.createTable({
-    id: p.bigint(),
-    address: p.hex(),
+    id: p.hex(),
     firstInteractionDate: p.bigint(),
     lastInteractionDate: p.bigint(),
     createSwapCount: p.bigint(),
     acceptSwapCount: p.bigint(),
     cancelSwapCount: p.bigint(),
     totalTransactionCount: p.bigint(),
-    cumulativeGasFees: p.bigint(),
     totalScore: p.bigint(),
   }),
 
   EnsDatabase: p.createTable({
-    id: p.bigint(),
-    address: p.hex(),
+    id: p.hex(),
     ensName: p.string(),
     ensAvatar: p.string(),
   }),
 
-  TokenType: p.createEnum(["ERC20", "ERC721"]),
+  TokenType: p.createEnum(["ERC20", "ERC721", "UNDEFINED"]),
   TokenDatabase: p.createTable({
-    id: p.bigint(),
-    address: p.hex(),
-    tokenType: p.enum("TokenType"),
+    id: p.hex(),
+    type: p.enum("TokenType"),
     name: p.string(),
     symbol: p.string(),
     decimals: p.string(),
@@ -48,12 +44,10 @@ export default createSchema((p) => ({
 
   OverallDatabase: p.createTable({
     id: p.bigint(),
-    address: p.hex(),
     uniqueAddresses: p.bigint(),
     createSwapCount: p.bigint(),
     acceptSwapCount: p.bigint(),
     cancelSwapCount: p.bigint(),
     totalTransactionCount: p.bigint(),
-    cumulativeGasFees: p.bigint(),
   }),
 }));

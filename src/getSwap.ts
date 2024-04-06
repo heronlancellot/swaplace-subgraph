@@ -1,10 +1,10 @@
-import { Swap, Client, Swaplace, Token } from "./types";
+import { Swap, Client, Swaplace, Asset } from "./types";
 
 export async function getSwapData(
   client: Client,
   Swaplace: Swaplace,
   swapId: bigint,
-) {
+): Promise<{ swap: Swap; tokenAddresses: string[] } | undefined> {
   try {
     const contractResponse = await client.readContract({
       abi: Swaplace.abi,
@@ -18,11 +18,11 @@ export async function getSwapData(
       BigInt(config) & ((BigInt(1) << BigInt(96)) - BigInt(1));
     const allowed = (BigInt(config) >> BigInt(96)).toString(16);
 
-    const biding: Token[] = contractResponse.biding.map((token: Token) => ({
+    const biding: Asset[] = contractResponse.biding.map((token: Asset) => ({
       addr: token.addr.toString(),
       amountOrId: token.amountOrId.toString(),
     }));
-    const asking: Token[] = contractResponse.asking.map((token: Token) => ({
+    const asking: Asset[] = contractResponse.asking.map((token: Asset) => ({
       addr: token.addr.toString(),
       amountOrId: token.amountOrId.toString(),
     }));
@@ -31,8 +31,8 @@ export async function getSwapData(
     const strinfiedAsk: string = JSON.stringify(asking);
 
     let tokenAddresses: string[] = [];
-    biding.map((token: Token) => tokenAddresses.push(token.addr.toString()));
-    asking.map((token: Token) => tokenAddresses.push(token.addr.toString()));
+    biding.map((token: Asset) => tokenAddresses.push(token.addr.toString()));
+    asking.map((token: Asset) => tokenAddresses.push(token.addr.toString()));
 
     const swap: Swap = {
       allowed: allowed,
