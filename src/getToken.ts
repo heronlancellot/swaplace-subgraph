@@ -94,12 +94,23 @@ export async function getTokenData(
       token.baseUri = await getBaseURI(contractResponse.toString());
       token.type = TokenType.ERC721;
     } catch (error) {
-      token.type = TokenType.UNDEFINED;
-      console.log(
-        "ERC721: Failed to fetch token baseUri for contract %s. It might not be the right standard. Error: %s",
-        tokenAddress,
-        error,
-      );
+      let errorMessage = error?.toString();
+      const erc721NonexistentToken = /ERC721NonexistentToken\(\d+\)/;
+      const erc721MetadataPattern =
+        /ERC721Metadata: URI query for nonexistent token/;
+      if (
+        !errorMessage?.match(erc721NonexistentToken) ||
+        !errorMessage?.match(erc721MetadataPattern)
+      ) {
+        token.type = TokenType.UNDEFINED;
+        console.log(
+          "ERC721: Failed to fetch token baseUri for contract %s. It might not be the right standard. Error: %s",
+          tokenAddress,
+          error,
+        );
+      } else {
+        token.type = TokenType.ERC721;
+      }
     }
   }
 
