@@ -39,7 +39,7 @@ export default createSchema((p) => ({
     name: p.string(),
     symbol: p.string(),
     decimals: p.string(),
-    baseUri: p.string(), //Pegar o resultado e reitrar as barras, deixar apenas o que está no meio
+    baseUri: p.string(),
   }),
 
   OverallDatabase: p.createTable({
