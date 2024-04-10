@@ -1,3 +1,5 @@
+swaplace.ts;
+
 import { ponder } from "@/generated";
 import { getSwapData } from "./getSwap";
 import { getEnsData } from "./getEns";
@@ -202,90 +204,168 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   }
 });
 
-// ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
-//   const { SwapDatabase } = context.db;
-//   const { swapId } = event.args;
+ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
+  const { client } = context;
+  const { Swaplace } = context.contracts;
+  const { OverallDatabase, ProfileDatabase, SwapDatabase } = context.db;
+  const { swapId, owner } = event.args;
 
-//   try {
-//     await SwapDatabase.update({
-//       id: swapId,
-//       data: {
-//         status: "CANCELED",
-//       },
-//     });
-//   } catch (error) {
-//     console.log("Error updating SwapDatabase. Creating new entry instead.");
-//     const { client } = context;
-//     const { Swaplace } = context.contracts;
-//     const { swapId, owner } = event.args;
+  try {
+    const response = await getSwapData(client, Swaplace, swapId);
+    let swap: Swap | undefined = response?.swap;
 
-//     const { expiry, allowed, strinfiedBid, strinfiedAsk } = await getSwapData(
-//       client,
-//       Swaplace,
-//       swapId,
-//     );
+    if (swap != undefined && swap) {
+      await SwapDatabase.upsert({
+        id: swapId,
+        create: {
+          blockTimestamp: event.block.timestamp,
+          transactionHash: event.transaction.hash,
+          status: "ACCEPTED",
+          swapId: swapId,
+          owner: owner,
+          allowed: `0x${swap.allowed}`,
+          expiry: swap.expiry,
+          bid: swap.bid,
+          ask: swap.ask,
+        },
+        update: {
+          status: "ACCEPTED",
+        },
+      });
+    } else {
+      console.log("Swap is possible undefined.");
+    }
+  } catch (error) {
+    console.log(
+      "Failed to update SwapDatabase entry for address %s. Error: %s",
+      owner,
+      error,
+    );
+  }
 
-//     await SwapDatabase.create({
-//       id: swapId,
-//       data: {
-//         blockTimestamp: event.block.timestamp,
-//         transactionHash: event.transaction.hash,
-//         status: "CANCELED",
-//         swapId: swapId,
-//         owner: owner,
-//         allowed: `0x${allowed}`,
-//         expiry: expiry,
-//         bid: strinfiedBid,
-//         ask: strinfiedAsk,
-//       },
-//     });
-//   } finally {
-//     console.log("SwapDatabase updated successfully.");
-//   }
-// });
+  try {
+    const overall = await OverallDatabase.findUnique({
+      id: BigInt(0),
+    });
+    if (overall != null) {
+      await OverallDatabase.update({
+        id: BigInt(0),
+        data: {
+          acceptSwapCount: overall.acceptSwapCount + BigInt(1),
+          totalTransactionCount: overall.totalTransactionCount + BigInt(1),
+        },
+      });
+    }
+  } catch (error) {
+    console.log(
+      "Failed to update OverallDatabase with swapId %s. Error: %s",
+      swapId,
+      error,
+    );
+  }
 
-// ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
-//   const { SwapDatabase } = context.db;
-//   const { swapId } = event.args;
+  try {
+    const profile = await ProfileDatabase.findUnique({
+      id: owner,
+    });
+    if (profile != null) {
+      await ProfileDatabase.update({
+        id: owner,
+        data: {
+          acceptSwapCount: profile.acceptSwapCount + BigInt(1),
+          totalTransactionCount: profile.totalTransactionCount + BigInt(1),
+          totalScore: profile.totalScore + BigInt(10), // How much should it increment/decrement?
+        },
+      });
+    }
+  } catch (error) {
+    console.log(
+      "Failed to update ProfileDatabase for owner %s. Error: %s",
+      owner,
+      error,
+    );
+  }
+});
 
-//   try {
-//     await SwapDatabase.update({
-//       id: swapId,
-//       data: {
-//         status: "ACCEPTED",
-//       },
-//     });
-//   } catch (error) {
-//     console.log("Error updating SwapDatabase. Creating new entry instead.");
-//     const { client } = context;
-//     const { Swaplace } = context.contracts;
-//     const { swapId, owner } = event.args;
-//     const { expiry, allowed, strinfiedBid, strinfiedAsk } = await getSwapData(
-//       client,
-//       Swaplace,
-//       swapId,
-//     );
+ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
+  const { client } = context;
+  const { Swaplace } = context.contracts;
+  const { OverallDatabase, ProfileDatabase, SwapDatabase } = context.db;
+  const { swapId, owner } = event.args;
 
-//     await SwapDatabase.upsert({
-//       id: swapId,
+  try {
+    const response = await getSwapData(client, Swaplace, swapId);
+    let swap: Swap | undefined = response?.swap;
 
-//       create: {
-//         blockTimestamp: event.block.timestamp,
-//         transactionHash: event.transaction.hash,
-//         status: "ACCEPTED",
-//         swapId: swapId,
-//         owner: owner,
-//         allowed: `0x${allowed}`,
-//         expiry: expiry,
-//         bid: strinfiedBid,
-//         ask: strinfiedAsk,
-//       },
+    if (swap != undefined && swap) {
+      await SwapDatabase.upsert({
+        id: swapId,
+        create: {
+          blockTimestamp: event.block.timestamp,
+          transactionHash: event.transaction.hash,
+          status: "CANCELED",
+          swapId: swapId,
+          owner: owner,
+          allowed: `0x${swap.allowed}`,
+          expiry: swap.expiry,
+          bid: swap.bid,
+          ask: swap.ask,
+        },
+        update: {
+          status: "CANCELED",
+        },
+      });
+    } else {
+      console.log("Swap is possible undefined.");
+    }
+  } catch (error) {
+    console.log(
+      "Failed to update SwapDatabase entry for address %s. Error: %s",
+      owner,
+      error,
+    );
+  }
 
-//       update: {
-//         status: "ACCEPTED",
-//       },
-//     });
-//   } finally {
-//     console.log("SwapDatabase updated successfully.");
-//   }
-// });
+  try {
+    const overall = await OverallDatabase.findUnique({
+      id: BigInt(0),
+    });
+    if (overall != null) {
+      await OverallDatabase.update({
+        id: BigInt(0),
+        data: {
+          cancelSwapCount: overall.cancelSwapCount + BigInt(1),
+          totalTransactionCount: overall.totalTransactionCount + BigInt(1),
+        },
+      });
+    }
+  } catch (error) {
+    console.log(
+      "Failed to update OverallDatabase with swapId %s. Error: %s",
+      swapId,
+      error,
+    );
+  }
+
+  try {
+    const profile = await ProfileDatabase.findUnique({
+      id: owner,
+    });
+    if (profile != null) {
+      await ProfileDatabase.update({
+        id: owner,
+        data: {
+          cancelSwapCount: profile.cancelSwapCount + BigInt(1),
+          totalTransactionCount: profile.totalTransactionCount + BigInt(1),
+          totalScore: profile.totalScore + BigInt(10), // How much should it increment/decrement?
+        },
+      });
+    }
+  } catch (error) {
+    console.log(
+      "Failed to update ProfileDatabase for owner %s. Error: %s",
+      owner,
+      error,
+    );
+  }
+});
