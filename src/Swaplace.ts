@@ -1,5 +1,3 @@
-swaplace.ts;
-
 import { ponder } from "@/generated";
 import { getSwapData } from "./getSwap";
 import { getEnsData } from "./getEns";
