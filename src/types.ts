@@ -1,10 +1,10 @@
 export interface Swap {
   allowed: string;
   expiry: bigint;
-  bid: string;
-  ask: string;
   recipient: bigint;
   value: bigint;
+  bid: string;
+  ask: string;
 }
 
 export interface Client {
