@@ -13,6 +13,8 @@ export default createSchema((p) => ({
     expiry: p.bigint(),
     bid: p.string(),
     ask: p.string(),
+    recipient: p.bigint(),
+    value: p.bigint(),
   }),
 
   ProfileDatabase: p.createTable({
