@@ -69,10 +69,10 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
           owner: owner,
           allowed: `0x${swap.allowed}`,
           expiry: swap.expiry,
+          recipient: swap.recipient,
+          value: swap.recipient,
           bid: swap.bid,
           ask: swap.ask,
-          recipient: (swap.recipient = BigInt(0)),
-          value: (swap.value = BigInt(0)),
         },
       });
     } else {
@@ -181,7 +181,6 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   /// @dev Creates a new entry in the EnsDatabase with the owner reverse record.
   try {
     const primaryName = await getEnsData(client, owner);
-    console.log("PRIMARY NAME:", primaryName);
 
     if (primaryName) {
       await EnsDatabase.upsert({
@@ -228,10 +227,10 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
           owner: owner,
           allowed: `0x${swap.allowed}`,
           expiry: swap.expiry,
+          recipient: swap.recipient,
+          value: swap.recipient,
           bid: swap.bid,
           ask: swap.ask,
-          recipient: (swap.recipient = BigInt(0)),
-          value: (swap.value = BigInt(0)),
         },
         update: {
           status: "ACCEPTED",
@@ -313,10 +312,10 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
           owner: owner,
           allowed: `0x${swap.allowed}`,
           expiry: swap.expiry,
+          recipient: swap.recipient,
+          value: swap.recipient,
           bid: swap.bid,
           ask: swap.ask,
-          recipient: (swap.recipient = BigInt(0)),
-          value: (swap.value = BigInt(0)),
         },
         update: {
           status: "CANCELED",
@@ -364,7 +363,6 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
         data: {
           cancelSwapCount: profile.cancelSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
-          totalScore: profile.totalScore + BigInt(10), // How much should it increment/decrement?
         },
       });
     }
