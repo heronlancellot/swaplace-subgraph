@@ -3,6 +3,8 @@ export interface Swap {
   expiry: bigint;
   bid: string;
   ask: string;
+  recipient: bigint;
+  value: bigint;
 }
 
 export interface Client {
