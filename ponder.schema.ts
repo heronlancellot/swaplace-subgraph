@@ -11,10 +11,10 @@ export default createSchema((p) => ({
     owner: p.hex(),
     allowed: p.hex(),
     expiry: p.bigint(),
-    bid: p.string(),
-    ask: p.string(),
     recipient: p.bigint(),
     value: p.bigint(),
+    bid: p.string(),
+    ask: p.string(),
   }),
 
   ProfileDatabase: p.createTable({
