@@ -71,6 +71,8 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
           expiry: swap.expiry,
           bid: swap.bid,
           ask: swap.ask,
+          recipient: (swap.recipient = BigInt(0)),
+          value: (swap.value = BigInt(0)),
         },
       });
     } else {
@@ -179,20 +181,23 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   /// @dev Creates a new entry in the EnsDatabase with the owner reverse record.
   try {
     const primaryName = await getEnsData(client, owner);
+    console.log("PRIMARY NAME:", primaryName);
 
-    await EnsDatabase.upsert({
-      id: `0x${owner}`,
-
-      create: {
-        ensName: primaryName,
-        ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
-      },
-
-      update: {
-        ensName: primaryName,
-        ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
-      },
-    });
+    if (primaryName) {
+      await EnsDatabase.upsert({
+        id: `0x${owner}`,
+        create: {
+          ensName: primaryName,
+          ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
+        },
+        update: {
+          ensName: primaryName,
+          ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
+        },
+      });
+    } else {
+      console.log("No ENS name found for address:", owner);
+    }
   } catch (error) {
     console.log(
       "Failed to create EnsDatabase entry for address %s. Error: %s",
@@ -225,6 +230,8 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
           expiry: swap.expiry,
           bid: swap.bid,
           ask: swap.ask,
+          recipient: (swap.recipient = BigInt(0)),
+          value: (swap.value = BigInt(0)),
         },
         update: {
           status: "ACCEPTED",
@@ -308,6 +315,8 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
           expiry: swap.expiry,
           bid: swap.bid,
           ask: swap.ask,
+          recipient: (swap.recipient = BigInt(0)),
+          value: (swap.value = BigInt(0)),
         },
         update: {
           status: "CANCELED",
