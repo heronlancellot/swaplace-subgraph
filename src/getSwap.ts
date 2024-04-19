@@ -14,9 +14,19 @@ export async function getSwapData(
     });
 
     let config: any = contractResponse.config;
+    // Extracting the allowed address
+    const allowed = (config >> BigInt(96)).toString(16);
+
+    // Extracting the expiry timestamp
     const expiry: bigint =
       BigInt(config) & ((BigInt(1) << BigInt(96)) - BigInt(1));
-    const allowed = (BigInt(config) >> BigInt(96)).toString(16);
+
+    // Extracting the recipient
+    const recipient: bigint =
+      (config >> BigInt(56)) & ((BigInt(1) << BigInt(8)) - BigInt(1));
+
+    // Extracting the value, compressed by a factor of 12
+    const value: bigint = config & ((BigInt(1) << BigInt(56)) - BigInt(1));
 
     const biding: Asset[] = contractResponse.biding.map((token: Asset) => ({
       addr: token.addr.toString(),
@@ -39,6 +49,8 @@ export async function getSwapData(
       expiry: expiry,
       bid: strinfiedBid,
       ask: strinfiedAsk,
+      recipient: recipient,
+      value: value,
     };
 
     return { swap, tokenAddresses };

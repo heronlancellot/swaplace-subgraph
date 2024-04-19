@@ -1,6 +1,8 @@
 export interface Swap {
   allowed: string;
   expiry: bigint;
+  recipient: bigint;
+  value: bigint;
   bid: string;
   ask: string;
 }

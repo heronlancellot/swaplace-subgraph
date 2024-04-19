@@ -11,6 +11,8 @@ export default createSchema((p) => ({
     owner: p.hex(),
     allowed: p.hex(),
     expiry: p.bigint(),
+    recipient: p.bigint(),
+    value: p.bigint(),
     bid: p.string(),
     ask: p.string(),
   }),

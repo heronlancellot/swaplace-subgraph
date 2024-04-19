@@ -69,6 +69,8 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
           owner: owner,
           allowed: `0x${swap.allowed}`,
           expiry: swap.expiry,
+          recipient: swap.recipient,
+          value: swap.recipient,
           bid: swap.bid,
           ask: swap.ask,
         },
@@ -180,19 +182,21 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   try {
     const primaryName = await getEnsData(client, owner);
 
-    await EnsDatabase.upsert({
-      id: `0x${owner}`,
-
-      create: {
-        ensName: primaryName,
-        ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
-      },
-
-      update: {
-        ensName: primaryName,
-        ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
-      },
-    });
+    if (primaryName) {
+      await EnsDatabase.upsert({
+        id: `0x${owner}`,
+        create: {
+          ensName: primaryName,
+          ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
+        },
+        update: {
+          ensName: primaryName,
+          ensAvatar: `https: metadata.ens.domains/mainnet/avatar/${primaryName}`,
+        },
+      });
+    } else {
+      console.log("No ENS name found for address:", owner);
+    }
   } catch (error) {
     console.log(
       "Failed to create EnsDatabase entry for address %s. Error: %s",
@@ -223,6 +227,8 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
           owner: owner,
           allowed: `0x${swap.allowed}`,
           expiry: swap.expiry,
+          recipient: swap.recipient,
+          value: swap.recipient,
           bid: swap.bid,
           ask: swap.ask,
         },
@@ -306,6 +312,8 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
           owner: owner,
           allowed: `0x${swap.allowed}`,
           expiry: swap.expiry,
+          recipient: swap.recipient,
+          value: swap.recipient,
           bid: swap.bid,
           ask: swap.ask,
         },
@@ -355,7 +363,6 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
         data: {
           cancelSwapCount: profile.cancelSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
-          totalScore: profile.totalScore + BigInt(10), // How much should it increment/decrement?
         },
       });
     }
