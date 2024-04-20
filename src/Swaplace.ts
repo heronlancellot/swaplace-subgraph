@@ -67,7 +67,7 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
           status: "CREATED",
           swapId: swapId,
           owner: owner,
-          allowed: `0x${swap.allowed}`,
+          allowed: swap.allowed,
           expiry: swap.expiry,
           recipient: swap.recipient,
           value: swap.recipient,
@@ -92,10 +92,6 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
               client,
               tokenAddresses[i] as string,
             );
-
-            let aaa = `0x${tokenAddresses[i]?.split("0x")[1]}`;
-            let bbb = `0x${token.address?.split("0x")[1]}`;
-            console.log("AAAAAAAAAAAA %s %s", aaa, bbb);
 
             await TokenDatabase.create({
               id: `0x${token.address?.split("0x")[1]}`,
@@ -132,12 +128,23 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   /// @dev Creates a new entry in the ProfileDatabase with the owner of the swap.
   try {
     const profile = await ProfileDatabase.findUnique({
-      id: `0x${owner}`,
+      id: owner,
     });
     if (profile == null) {
+      let primaryName: string = "";
+      // try {
+      //   primaryName = await getEnsData(client, owner);
+      // } catch (error) {
+      //   console.log(
+      //     "Failed to get ENS data for address %s. Error: %s",
+      //     owner,
+      //     error,
+      //   );
+      // }
       await ProfileDatabase.create({
-        id: `0x${owner}`,
+        id: owner,
         data: {
+          ensName: primaryName,
           firstInteractionDate: blockNumber,
           lastInteractionDate: blockNumber,
           createSwapCount: BigInt(1),
@@ -160,9 +167,20 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
         });
       }
     } else {
+      let primaryName: string = "";
+      // try {
+      //   primaryName = await getEnsData(client, owner);
+      // } catch (error) {
+      //   console.log(
+      //     "Failed to get ENS data for address %s. Error: %s",
+      //     owner,
+      //     error,
+      //   );
+      // }
       await ProfileDatabase.update({
-        id: `0x${owner}`,
+        id: owner,
         data: {
+          ensName: primaryName,
           lastInteractionDate: blockNumber,
           createSwapCount: profile.createSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
@@ -177,31 +195,6 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
       error,
     );
   }
-
-  /// @dev Creates a new entry in the EnsDatabase with the owner reverse record.
-  // try {
-  //   const primaryName = await getEnsData(client, owner);
-
-  //   if (primaryName) {
-  //     await EnsDatabase.upsert({
-  //       id: `0x${owner}`,
-  //       create: {
-  //         ensName: primaryName,
-  //       },
-  //       update: {
-  //         ensName: primaryName,
-  //       },
-  //     });
-  //   } else {
-  //     console.log("No ENS name found for address:", owner);
-  //   }
-  // } catch (error) {
-  //   console.log(
-  //     "Failed to create EnsDatabase entry for address %s. Error: %s",
-  //     owner,
-  //     error,
-  //   );
-  // }
 });
 
 ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
@@ -223,7 +216,7 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
           status: "ACCEPTED",
           swapId: swapId,
           owner: owner,
-          allowed: `0x${swap.allowed}`,
+          allowed: swap.allowed,
           expiry: swap.expiry,
           recipient: swap.recipient,
           value: swap.recipient,
@@ -268,12 +261,23 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
 
   try {
     const profile = await ProfileDatabase.findUnique({
-      id: `0x${owner}`,
+      id: owner,
     });
     if (profile != null) {
+      let primaryName: string = "";
+      // try {
+      //   primaryName = await getEnsData(client, owner);
+      // } catch (error) {
+      //   console.log(
+      //     "Failed to get ENS data for address %s. Error: %s",
+      //     owner,
+      //     error,
+      //   );
+      // }
       await ProfileDatabase.update({
-        id: `0x${owner}`,
+        id: owner,
         data: {
+          ensName: primaryName,
           acceptSwapCount: profile.acceptSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
           totalScore: profile.totalScore + BigInt(10), // How much should it increment/decrement?
@@ -308,7 +312,7 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
           status: "CANCELED",
           swapId: swapId,
           owner: owner,
-          allowed: `0x${swap.allowed}`,
+          allowed: swap.allowed,
           expiry: swap.expiry,
           recipient: swap.recipient,
           value: swap.recipient,
@@ -353,12 +357,23 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
 
   try {
     const profile = await ProfileDatabase.findUnique({
-      id: `0x${owner}`,
+      id: owner,
     });
     if (profile != null) {
+      let primaryName: string = "";
+      // try {
+      //   primaryName = await getEnsData(client, owner);
+      // } catch (error) {
+      //   console.log(
+      //     "Failed to get ENS data for address %s. Error: %s",
+      //     owner,
+      //     error,
+      //   );
+      // }
       await ProfileDatabase.update({
-        id: `0x${owner}`,
+        id: owner,
         data: {
+          ensName: primaryName,
           cancelSwapCount: profile.cancelSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
         },
