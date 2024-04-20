@@ -132,11 +132,11 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   /// @dev Creates a new entry in the ProfileDatabase with the owner of the swap.
   try {
     const profile = await ProfileDatabase.findUnique({
-      id: owner,
+      id: `0x${owner}`,
     });
     if (profile == null) {
       await ProfileDatabase.create({
-        id: owner,
+        id: `0x${owner}`,
         data: {
           firstInteractionDate: blockNumber,
           lastInteractionDate: blockNumber,
@@ -161,7 +161,7 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
       }
     } else {
       await ProfileDatabase.update({
-        id: owner,
+        id: `0x${owner}`,
         data: {
           lastInteractionDate: blockNumber,
           createSwapCount: profile.createSwapCount + BigInt(1),
@@ -268,11 +268,11 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
 
   try {
     const profile = await ProfileDatabase.findUnique({
-      id: owner,
+      id: `0x${owner}`,
     });
     if (profile != null) {
       await ProfileDatabase.update({
-        id: owner,
+        id: `0x${owner}`,
         data: {
           acceptSwapCount: profile.acceptSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
@@ -353,11 +353,11 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
 
   try {
     const profile = await ProfileDatabase.findUnique({
-      id: owner,
+      id: `0x${owner}`,
     });
     if (profile != null) {
       await ProfileDatabase.update({
-        id: owner,
+        id: `0x${owner}`,
         data: {
           cancelSwapCount: profile.cancelSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
