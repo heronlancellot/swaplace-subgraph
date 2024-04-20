@@ -31,7 +31,6 @@ export default createSchema((p) => ({
   EnsDatabase: p.createTable({
     id: p.hex(),
     ensName: p.string(),
-    ensAvatar: p.string(),
   }),
 
   TokenType: p.createEnum(["ERC20", "ERC721", "UNDEFINED"]),
