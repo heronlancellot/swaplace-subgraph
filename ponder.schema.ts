@@ -19,6 +19,7 @@ export default createSchema((p) => ({
 
   ProfileDatabase: p.createTable({
     id: p.hex(),
+    ensName: p.string(),
     firstInteractionDate: p.bigint(),
     lastInteractionDate: p.bigint(),
     createSwapCount: p.bigint(),
@@ -26,12 +27,6 @@ export default createSchema((p) => ({
     cancelSwapCount: p.bigint(),
     totalTransactionCount: p.bigint(),
     totalScore: p.bigint(),
-  }),
-
-  EnsDatabase: p.createTable({
-    id: p.hex(),
-    ensName: p.string(),
-    ensAvatar: p.string(),
   }),
 
   TokenType: p.createEnum(["ERC20", "ERC721", "UNDEFINED"]),

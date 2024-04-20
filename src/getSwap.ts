@@ -45,7 +45,7 @@ export async function getSwapData(
     asking.map((token: Asset) => tokenAddresses.push(token.addr.toString()));
 
     const swap: Swap = {
-      allowed: allowed,
+      allowed: `0x${allowed}`,
       expiry: expiry,
       bid: strinfiedBid,
       ask: strinfiedAsk,

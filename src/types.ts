@@ -1,5 +1,5 @@
 export interface Swap {
-  allowed: string;
+  allowed: `0x${string}`;
   expiry: bigint;
   recipient: bigint;
   value: bigint;

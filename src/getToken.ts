@@ -42,11 +42,7 @@ export async function getTokenData(
     token.name = contractResponse;
   } catch (error) {
     token.name = "";
-    console.log(
-      "Failed to fetch token name for contract %s. Error: %s",
-      tokenAddress,
-      error,
-    );
+    console.log("Failed to fetch token name for contract %s.", tokenAddress);
   }
 
   try {
@@ -60,11 +56,7 @@ export async function getTokenData(
     token.symbol = contractResponse.toString();
   } catch (error) {
     token.symbol = "";
-    console.log(
-      "Failed to fetch token symbol for contract %s. Error: %s",
-      tokenAddress,
-      error,
-    );
+    console.log("Failed to fetch token symbol for contract %s.", tokenAddress);
   }
 
   try {
@@ -80,9 +72,8 @@ export async function getTokenData(
   } catch (error) {
     token.decimals = "";
     console.log(
-      "Failed to fetch token decimals for contract %s. Might be a ERC721. Error: %s",
+      "Failed to fetch token decimals for contract %s. Might be a ERC721.",
       tokenAddress,
-      error,
     );
     try {
       const contractResponse = await client.readContract({
@@ -104,9 +95,8 @@ export async function getTokenData(
       ) {
         token.type = TokenType.UNDEFINED;
         console.log(
-          "ERC721: Failed to fetch token baseUri for contract %s. It might not be the right standard. Error: %s",
+          "ERC721: Failed to fetch token baseUri for contract %s. It might not be the right standard",
           tokenAddress,
-          error,
         );
       } else {
         token.type = TokenType.ERC721;
