@@ -12,7 +12,7 @@ export interface Client {
 }
 
 export interface Swaplace {
-  abi: any;
+  abi: Readonly<Array<Record<string, any>>>;
   address: string;
 }
 

@@ -1,5 +1,5 @@
-import { abi } from "../abis/ERC20";
-import { ab1 } from "../abis/ERC721";
+import { ERC20Abi } from "../abis/ERC20";
+import { ERC721Abi } from "../abis/ERC721";
 import { Client, Token, TokenType } from "./types";
 
 async function getBaseURI(tokenURI: string): Promise<string> {
@@ -33,7 +33,7 @@ export async function getTokenData(
 
   try {
     const contractResponse = await client.readContract({
-      abi: abi,
+      abi: ERC20Abi,
       address: tokenAddress,
       functionName: "name",
       args: [],
@@ -47,7 +47,7 @@ export async function getTokenData(
 
   try {
     const contractResponse = await client.readContract({
-      abi: abi,
+      abi: ERC20Abi,
       address: tokenAddress,
       functionName: "symbol",
       args: [],
@@ -61,7 +61,7 @@ export async function getTokenData(
 
   try {
     const contractResponse = await client.readContract({
-      abi: abi,
+      abi: ERC20Abi,
       address: tokenAddress,
       functionName: "decimals",
       args: [],
@@ -77,7 +77,7 @@ export async function getTokenData(
     );
     try {
       const contractResponse = await client.readContract({
-        abi: ab1,
+        abi: ERC721Abi,
         address: tokenAddress,
         functionName: "tokenURI",
         args: [1],
