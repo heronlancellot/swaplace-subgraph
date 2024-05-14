@@ -1,8 +1,9 @@
 import { ponder } from "@/generated";
 import { getSwapData } from "./getSwap";
-import { getEnsData } from "./getEns";
+//import { getEnsData } from "./getEns";
 import { getTokenData } from "./getToken";
 import { Swap, Token } from "./types";
+import { createConfig } from "@ponder/core";
 
 ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   const { client } = context;
@@ -10,7 +11,7 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   const {
     SwapDatabase,
     ProfileDatabase,
-    EnsDatabase,
+    //EnsDatabase,
     TokenDatabase,
     OverallDatabase,
   } = context.db;
@@ -65,6 +66,7 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
           blockTimestamp: event.block.timestamp,
           transactionHash: event.transaction.hash,
           status: "CREATED",
+          network: BigInt(context.network.chainId),
           swapId: swapId,
           owner: owner,
           allowed: swap.allowed,
@@ -214,6 +216,7 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
           blockTimestamp: event.block.timestamp,
           transactionHash: event.transaction.hash,
           status: "ACCEPTED",
+          network: BigInt(context.network.chainId),
           swapId: swapId,
           owner: owner,
           allowed: swap.allowed,
@@ -280,7 +283,7 @@ ponder.on("Swaplace:SwapAccepted", async ({ event, context }) => {
           ensName: primaryName,
           acceptSwapCount: profile.acceptSwapCount + BigInt(1),
           totalTransactionCount: profile.totalTransactionCount + BigInt(1),
-          totalScore: profile.totalScore + BigInt(10), // How much should it increment/decrement?
+          totalScore: profile.totalScore + BigInt(10),
         },
       });
     }
@@ -310,6 +313,7 @@ ponder.on("Swaplace:SwapCanceled", async ({ event, context }) => {
           blockTimestamp: event.block.timestamp,
           transactionHash: event.transaction.hash,
           status: "CANCELED",
+          network: BigInt(context.network.chainId),
           swapId: swapId,
           owner: owner,
           allowed: swap.allowed,

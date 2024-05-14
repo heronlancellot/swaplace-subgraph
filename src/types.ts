@@ -13,7 +13,7 @@ export interface Client {
 
 export interface Swaplace {
   abi: any;
-  address: string;
+  address: any;
 }
 
 export interface Asset {

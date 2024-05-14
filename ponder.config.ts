@@ -23,8 +23,8 @@ export default createConfig({
           startBlock: 5719042,
         },
         // kakarot: {
-        //   address: "0x11FA19B071faB6E119dBefFfaa23eFb79F14f4A2",
-        //   startBlock: 3394,
+        //   address: "0xB317127b50b22e62637E3c333A585a8ccfd0721D",
+        //   startBlock: 90,
         // },
       },
     },

@@ -7,6 +7,7 @@ export default createSchema((p) => ({
     blockTimestamp: p.bigint(),
     transactionHash: p.hex(),
     status: p.enum("StatusSwaps"),
+    network: p.bigint(),
     swapId: p.bigint(),
     owner: p.hex(),
     allowed: p.hex(),
