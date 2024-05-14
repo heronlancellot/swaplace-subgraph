@@ -1,4 +1,4 @@
-export const SwaplaceAbi = [
+export const SwaplaceAbi: Readonly<Array<Record<string, any>>> = [
   {
     inputs: [],
     name: "InvalidAddress",

@@ -1,4 +1,4 @@
-export const ab1 = [
+export const ERC721Abi: Readonly<Array<Record<string, any>>> = [
   {
     inputs: [
       { internalType: "string", name: "name", type: "string" },

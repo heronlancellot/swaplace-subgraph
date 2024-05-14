@@ -1,4 +1,4 @@
-export const abi = [
+export const ERC20Abi: Readonly<Array<Record<string, any>>> = [
   {
     inputs: [
       {
