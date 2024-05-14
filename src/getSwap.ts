@@ -41,8 +41,8 @@ export async function getSwapData(
     const strinfiedAsk: string = JSON.stringify(asking);
 
     let tokenAddresses: string[] = [];
-    biding.map((token: Asset) => tokenAddresses.push(token.addr.toString()));
-    asking.map((token: Asset) => tokenAddresses.push(token.addr.toString()));
+    biding.map((token: Asset) => tokenAddresses.push(token.addr));
+    asking.map((token: Asset) => tokenAddresses.push(token.addr));
 
     const swap: Swap = {
       allowed: `0x${allowed}`,
