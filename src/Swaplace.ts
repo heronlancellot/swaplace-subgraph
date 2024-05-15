@@ -3,7 +3,6 @@ import { getSwapData } from "./getSwap";
 //import { getEnsData } from "./getEns";
 import { getTokenData } from "./getToken";
 import { Swap, Token } from "./types";
-import { createConfig } from "@ponder/core";
 
 ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
   const { client } = context;
