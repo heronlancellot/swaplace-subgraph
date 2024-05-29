@@ -145,6 +145,7 @@ ponder.on("Swaplace:SwapCreated", async ({ event, context }) => {
       await ProfileDatabase.create({
         id: owner,
         data: {
+          network: BigInt(context.network.chainId),
           ensName: primaryName,
           firstInteractionDate: blockNumber,
           lastInteractionDate: blockNumber,
