@@ -9,10 +9,10 @@ export default createConfig({
       chainId: 11155111,
       transport: http(process.env.ALCHEMY_RPC_URL),
     },
-    kakarot: {
-      chainId: 1802203764,
-      transport: http(process.env.KAKAROT_RPC_URL),
-    },
+    // kakarot: {
+    //   chainId: 1802203764,
+    //   transport: http(process.env.KAKAROT_RPC_URL),
+    // },
   },
   contracts: {
     Swaplace: {

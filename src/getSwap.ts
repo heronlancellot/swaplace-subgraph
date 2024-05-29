@@ -17,9 +17,9 @@ export async function getSwapData(
     // Extracting the allowed address
     const allowed = (config >> BigInt(96)).toString(16);
 
-    // Extracting the expiry timestamp
-    const expiry: bigint =
-      BigInt(config) & ((BigInt(1) << BigInt(96)) - BigInt(1));
+    // Directly calculating the expiry timestamp
+    let expiry: bigint =
+      (config >> BigInt(64)) & ((BigInt(1) << BigInt(32)) - BigInt(1));
 
     // Extracting the recipient
     const recipient: bigint =
