@@ -20,6 +20,7 @@ export default createSchema((p) => ({
 
   ProfileDatabase: p.createTable({
     id: p.hex(),
+    network: p.bigint(),
     ensName: p.string(),
     firstInteractionDate: p.bigint(),
     lastInteractionDate: p.bigint(),
